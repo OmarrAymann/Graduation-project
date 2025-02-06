@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thermal Data Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Thermal Data Visualization</h1>
+    <div id="thermal-map" style="width: 600px; height: 600px;"></div>
+
+    <script>
+        async function fetchThermalData() {
+            const response = await fetch('/thermal_data_show');
+            const data = await response.json();
+            return data;
+        }
+
+        function createThermalMap(data) {
+            const client_id = Object.keys(data)[0];
+            const thermalArray = data[client_id][0].pixels;
+
+            // Create a 2D array for the heatmap
+            const zData = [];
+            for (let i = 0; i < 8; i++) {
+                zData.push(thermalArray[i]);
+            }
+
+            const dataPlot = [{
+                z: zData,
+                type: 'heatmap',
+                colorscale: 'Viridis'
+            }];
+
+            const layout = {
+                title: 'Thermal Camera Data',
+                xaxis: {
+                    title: 'X-axis'
+                },
+                yaxis: {
+                    title: 'Y-axis'
+                }
+            };
+
+            Plotly.newPlot('thermal-map', dataPlot, layout);
+        }
+
+        window.onload = async () => {
+            const data = await fetchThermalData();
+            createThermalMap(data);
+        };
+    </script>
+</body>
+</html>
