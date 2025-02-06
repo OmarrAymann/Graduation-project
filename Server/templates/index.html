@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Routing</title>
+    <style>
+      * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        padding: 0;
+      }
+      body {
+  font-family: "Work Sans", sans-serif;
+  text-align: center;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+.container {
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+/* small */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+/* medium */
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+/* large */
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+.btns{
+  margin-top: 150px;
+  display: flex;
+  justify-content: space-between;
+}
+a{
+  text-decoration: none;
+  color: black;
+}
+button{
+  padding: 15px;
+  border: none;
+  border-radius: 5px ;
+  cursor:pointer;
+
+}
+
+
+
+
+
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Navigation For Data</h1>
+      <div class="btns">
+      <button><a href="/data_show">CLick Here for Sensors Data</a></button>
+      <button><a href="/thermal_data_show">CLick Here for Therm-cam Data</a></button>
+      <button><a href="/live_stream">CLick Here for Live Stream</a></button>
+      <button><a href="/home">CLick Here for Home Page</a></button>
+      <button><a href="/thermal_stream/ESP32_2">CLick Here for Thermal_live</a></button>
+      
+    </div><!-- btns -->
+    </div><!-- container -->
+  </body>
+</html>

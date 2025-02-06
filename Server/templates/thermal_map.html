@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Thermal Map</h1>
+    <canvas id="thermalChart" width="400" height="400"></canvas>
+    <script>
+        async function fetchThermalData() {
+            try {
+                const response = await fetch('/thermal_data_show');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Fetched thermal data:", data); // Log the fetched data
+                return data;
+            } catch (error) {
+                console.error("Error fetching thermal data:", error);
+                return null;
+            }
+        }
+
+        function createColorMap(data) {
+            const ctx = document.getElementById('thermalChart').getContext('2d');
+            const clientIds = Object.keys(data);
+            
+            if (clientIds.length === 0) {
+                console.error("No client data found");
+                return;
+            }
+            
+            const firstClientId = clientIds[0];
+            const thermalData = data[firstClientId][0].pixels; // Assuming the first entry of the first client
+            
+            console.log("Thermal data for client:", thermalData); // Log the specific thermal data
+            
+            if (!thermalData || thermalData.length !== 64) {
+                console.log("Thermal data is not in the expected format", thermalData);
+                return;
+            }
+
+            const dataMatrix = [];
+            for (let i = 0; i < 8; i++) {
+                dataMatrix.push(thermalData.slice(i * 8, (i + 1) * 8));
+            }
+
+            const colorMap = {
+                data: {
+                    datasets: [{
+                        label: 'Thermal Data',
+                        data: dataMatrix.flat().map((value, index) => ({
+                            x: index % 8,
+                            y: Math.floor(index / 8),
+                            v: value
+                        })),
+                        backgroundColor: function(context) {
+                            const value = context.dataset.data[context.dataIndex].v;
+                            return `rgb(${255 - value}, 0, ${value})`;
+                        }
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            max: 7,
+                            ticks: { stepSize: 1 }
+                        },
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            min: 0,
+                            max: 7,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctx, {
+                type: 'bubble',
+                data: colorMap.data,
+                options: colorMap.options
+            });
+        }
+
+        async function init() {
+            const thermalData = await fetchThermalData();
+            if (thermalData) {
+                createColorMap(thermalData);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
